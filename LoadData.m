@@ -3,18 +3,18 @@
 % K.A. Severson, P.M. Attia et al. Data Driven Prediction of Battery    %
 % Cycle Life Before Capacity Degradation (2019) Nature Energy           %
 % This code assumes the data is in a subdirectory named 'Data'          %
-% The structs include information on the 
+% The structs include information on the
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear; close all; clc
 
 load('.\Data\2017-05-12_batchdata_updated_struct_errorcorrect')
 
-batch1 = batch; 
+batch1 = batch;
 numBat1 = size(batch1,2);
 
 load('.\Data\2017-06-30_batchdata_updated_struct_errorcorrect')
 
-%Some batteries continued from the first run into the second. We append 
+%Some batteries continued from the first run into the second. We append
 %those to the first batch before continuing.
 add_len = [661, 980, 1059, 207, 481];
 summary_var_list = {'cycle','QDischarge','QCharge','IR','Tmax','Tavg',...
@@ -47,7 +47,7 @@ clearvars batch
 
 load('.\Data\2018-04-12_batchdata_updated_struct_errorcorrect')
 batch3 = batch;
-batch3(38) = []; %remove channel 46 upfront; there was a problem with 
+batch3(38) = []; %remove channel 46 upfront; there was a problem with
 %the data collection for this channel
 numBat3 = size(batch3,2);
 endcap3 = zeros(numBat3,1);
@@ -70,7 +70,7 @@ numBat = numBat1 + numBat2 + numBat3;
 %on the modeling goal, you may not want to do this step
 batch_combined([9,11,13,14,23]) = [];
 numBat = numBat - 5;
-numBat1 = numBat1 - 5; 
+numBat1 = numBat1 - 5;
 
 clearvars -except batch_combined numBat1 numBat2 numBat3 numBat
 
@@ -82,7 +82,7 @@ bat_label = zeros(numBat,1);
 for i = 1:numBat
     if batch_combined(i).summary.QDischarge(end) < 0.88
         bat_label(i) = find(batch_combined(i).summary.QDischarge < 0.88,1);
-        
+
     else
         bat_label(i) = size(batch_combined(i).cycles,2) + 1;
     end
@@ -102,5 +102,3 @@ test_ind = [1:2:(numBat1+numBat2),84];
 train_ind = 1:(numBat1+numBat2);
 train_ind(test_ind) = [];
 secondary_test_ind = numBat-numBat3+1:numBat;
-
-
